@@ -1,4 +1,4 @@
-package com.voitov.todolist;
+package com.voitov.todolist.domain;
 
 public enum Priority {
     HIGH,
