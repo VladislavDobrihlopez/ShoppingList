@@ -5,15 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import com.voitov.todolist.domain.Priority
 import com.voitov.todolist.domain.ShopItem
 import com.voitov.todolist.domain.ShopListRepository
+import kotlin.random.Random
 
 object ShopListRepositoryImpl : ShopListRepository {
-    private val shopItems = mutableListOf<ShopItem>()
+    private val shopItems =
+        sortedSetOf<ShopItem>({ shopItem1, shopItem2 -> shopItem1.id.compareTo(shopItem2.id) })
     private val shopItemsMutable = MutableLiveData<List<ShopItem>>()
     private var autoIncrementedId = 0
 
     init {
-        for (i in 1..10) {
-            addShopItem(ShopItem("block of flats $i", 1.0, Priority.HIGH, true))
+        for (i in 1..10_000) {
+            val enabled = Random.nextBoolean()
+            addShopItem(ShopItem("block of flats $i", 1.0, Priority.HIGH, enabled))
         }
         notifyObservers()
     }
@@ -29,7 +32,7 @@ object ShopListRepositoryImpl : ShopListRepository {
 
     override fun editShopItem(shopItem: ShopItem) {
         val oldShopItem = getShopItem(shopItem.id)
-        removeShopItem(oldShopItem.id)
+        shopItems.remove(oldShopItem)
         addShopItem(shopItem)
     }
 
@@ -42,8 +45,8 @@ object ShopListRepositoryImpl : ShopListRepository {
         return shopItemsMutable
     }
 
-    override fun removeShopItem(shopItemId: Int) {
-        shopItems.removeAt(shopItemId)
+    override fun removeShopItem(shopItem: ShopItem) {
+        shopItems.remove(shopItem)
         notifyObservers()
     }
 

@@ -21,6 +21,6 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun removeShopItem(shopItem: ShopItem) {
-        removeShopItemUseCase.removeShopItem(shopItem.id)
+        removeShopItemUseCase.removeShopItem(shopItem)
     }
 }
