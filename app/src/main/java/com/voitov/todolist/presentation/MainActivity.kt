@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.voitov.todolist.R
@@ -76,5 +77,39 @@ class MainActivity : AppCompatActivity() {
         adapter = ShopListAdapter()
         recyclerViewShopList.adapter = adapter
         adapter.setupPoolSize(recyclerViewShopList)
+        setupLongClickListener()
+        setupClickListener()
+        setupSwipeListener(recyclerViewShopList)
+    }
+
+    private fun setupSwipeListener(recyclerViewShopList: RecyclerView?) {
+        val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val shopItemPosition = viewHolder.adapterPosition
+                val shopItem = adapter.shopItems[shopItemPosition]
+                viewModel.removeShopItem(shopItem)
+            }
+        }
+        ItemTouchHelper(callback).attachToRecyclerView(recyclerViewShopList)
+    }
+
+    private fun setupClickListener() {
+        adapter.onShopItemClickListener = {
+            Log.d(TAG, it.toString())
+        }
+    }
+
+    private fun setupLongClickListener() {
+        adapter.onShopItemLongClickListener = {
+            viewModel.editShopItem(it)
+        }
     }
 }

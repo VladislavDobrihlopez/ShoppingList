@@ -5,17 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.voitov.todolist.R
 import com.voitov.todolist.domain.ShopItem
 
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>() {
     private var count = 0
-
+    private var count2 = 0
+    var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
+    var onShopItemClickListener: ((ShopItem) -> Unit)? = null
     var shopItems = listOf<ShopItem>()
         set(value) {
+            val diffUtilCallback = ShopListDiffCallback(shopItems, value)
+            val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+            diffResult.dispatchUpdatesTo(this)
             field = value
-            notifyDataSetChanged()
         }
 
     fun setupPoolSize(recyclerView: RecyclerView) {
@@ -44,11 +49,19 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     }
 
     override fun onBindViewHolder(holder: ShopListViewHolder, position: Int) {
+        Log.d(TAG, "OnBindViewHolder, count = ${count2++}")
         val shopItem = shopItems[position]
 
         with(holder) {
             textViewShopItemName.text = shopItem.name
             textViewShopItemCount.text = shopItem.count.toString()
+            itemView.setOnLongClickListener {
+                onShopItemLongClickListener?.invoke(shopItem)
+                true
+            }
+            itemView.setOnClickListener {
+                onShopItemClickListener?.invoke(shopItem)
+            }
         }
     }
 
@@ -74,5 +87,9 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
         private const val VIEW_TYPE_ENABLED = 100
         private const val VIEW_TYPE_DISABLED = 101
         private const val MAX_POOL_SIZE = 10
+    }
+
+    interface OnShopItemLongClickListener {
+        fun onLongClick(shopItem: ShopItem)
     }
 }
