@@ -4,6 +4,10 @@
     <string name="low">Low</string>
     <string name="medium">Medium</string>
     <string name="high">High</string>
-    <string name="save">save</string>
+    <string name="save">Save</string>
     <string name="add_a_shop_item">Add a shop item</string>
+    <string name="name">Name</string>
+    <string name="count">Count</string>
+    <string name="error_invalid_name">Invalid name</string>
+    <string name="error_invalid_count">Invalid count</string>
 </resources>

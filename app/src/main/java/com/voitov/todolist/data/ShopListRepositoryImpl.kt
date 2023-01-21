@@ -14,9 +14,14 @@ object ShopListRepositoryImpl : ShopListRepository {
     private var autoIncrementedId = 0
 
     init {
-        for (i in 1..10_000) {
+        for (i in 1..10) {
             val enabled = Random.nextBoolean()
-            addShopItem(ShopItem("block of flats $i", 1.0, Priority.HIGH, enabled))
+            val priority = when (Random.nextInt(3)) {
+                0 -> Priority.LOW
+                1 -> Priority.MEDIUM
+                else -> Priority.HIGH
+            }
+            addShopItem(ShopItem("block of flats $i", 1.0, priority, enabled))
         }
         notifyObservers()
     }
