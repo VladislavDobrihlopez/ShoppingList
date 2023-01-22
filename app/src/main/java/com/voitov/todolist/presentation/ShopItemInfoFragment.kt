@@ -1,8 +1,10 @@
 package com.voitov.todolist.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +33,18 @@ class ShopItemInfoFragment : Fragment() {
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
+    private lateinit var onFinishedListener: OnFinishedListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is OnFinishedListener) {
+            onFinishedListener = context
+        } else {
+            throw RuntimeException("It seems like activity doesn't implement ${onFinishedListener.javaClass}")
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,6 +61,7 @@ class ShopItemInfoFragment : Fragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         parseArguments()
     }
@@ -110,7 +125,7 @@ class ShopItemInfoFragment : Fragment() {
 
         if (screenMode == MODE_EDITING) {
             if (!args.containsKey(KEY_ITEM_ID)) {
-                throw java.lang.RuntimeException("Param $KEY_ITEM_ID is absent")
+                throw RuntimeException("Param $KEY_ITEM_ID is absent")
             }
             shopItemId = args.getInt(KEY_ITEM_ID)
         }
@@ -160,7 +175,7 @@ class ShopItemInfoFragment : Fragment() {
         })
 
         viewModel.shallCloseScreen.observe(viewLifecycleOwner, Observer {
-            requireActivity().onBackPressed()
+            onFinishedListener.onFinished()
         })
     }
 
@@ -200,5 +215,9 @@ class ShopItemInfoFragment : Fragment() {
         private const val MODE_ADDING = "mode_adding"
         private const val MODE_EDITING = "mode_editing"
         private const val KEY_ITEM_ID = "item_id"
+    }
+
+    interface OnFinishedListener {
+        fun onFinished()
     }
 }

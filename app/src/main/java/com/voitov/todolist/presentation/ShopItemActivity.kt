@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.voitov.todolist.R
 import com.voitov.todolist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListener {
     private lateinit var screenMode: String
     private var shopItemId = ShopItem.UNDEFINED_ID
 
@@ -15,7 +15,10 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent(intent)
-        launchAppropriateMode()
+
+        if (savedInstanceState === null) {
+            launchAppropriateMode()
+        }
     }
 
     private fun launchAppropriateMode() {
@@ -26,7 +29,7 @@ class ShopItemActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainerViewShopItem, fragment)
+            .replace(R.id.fragmentContainerViewShopItem, fragment)
             .commit()
     }
 
@@ -69,5 +72,9 @@ class ShopItemActivity : AppCompatActivity() {
         private const val MODE_ADDING = "mode_adding"
         private const val MODE_EDITING = "mode_editing"
         private const val EXTRA_ITEM_ID = "item_id"
+    }
+
+    override fun onFinished() {
+        finish()
     }
 }
