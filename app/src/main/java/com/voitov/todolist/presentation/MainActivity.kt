@@ -2,33 +2,30 @@ package com.voitov.todolist.presentation
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.voitov.todolist.R
+import com.voitov.todolist.databinding.ActivityMainBinding
 import com.voitov.todolist.domain.ShopItem
 
 class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListener {
     private val TAG = "MainActivity"
+    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
-    private lateinit var linearLayoutShopList: LinearLayout
-    private lateinit var floatingActionButtonAddShopItem: FloatingActionButton
-    private var fragmentContainerViewShopItemAlbum: FragmentContainerView? = null
     private lateinit var adapter: ShopListAdapter
 
     private val isPortraitMode: Boolean
-        get() = fragmentContainerViewShopItemAlbum === null
+        get() = binding.fragmentContainerViewShopItemAlbum == null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
 
-        initViews()
+        setContentView(binding.root)
         setupRecyclerView()
 
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
@@ -54,14 +51,8 @@ class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListene
         }
     }
 
-    private fun initViews() {
-        linearLayoutShopList = findViewById(R.id.linearLayoutShopList)
-        floatingActionButtonAddShopItem = findViewById(R.id.floatingActionButtonAddShopItem)
-        fragmentContainerViewShopItemAlbum = findViewById(R.id.fragmentContainerViewShopItemAlbum)
-    }
-
     private fun setupRecyclerView() {
-        val recyclerViewShopList = findViewById<RecyclerView>(R.id.recyclerViewShopList)
+        val recyclerViewShopList = binding.recyclerViewShopList
         adapter = ShopListAdapter()
         recyclerViewShopList.adapter = adapter
         adapter.setupPoolSize(recyclerViewShopList)
@@ -108,7 +99,7 @@ class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListene
     }
 
     private fun setupFAB() {
-        floatingActionButtonAddShopItem.setOnClickListener {
+        binding.floatingActionButtonAddShopItem.setOnClickListener {
             if (isPortraitMode) {
                 startActivity(ShopItemActivity.newIntentModeAddingItem(this@MainActivity))
             } else {

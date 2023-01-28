@@ -3,17 +3,21 @@ package com.voitov.todolist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.voitov.todolist.R
+import com.voitov.todolist.databinding.ActivityShopItemBinding
 import com.voitov.todolist.domain.ShopItem
 
 class ShopItemActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListener {
+    private lateinit var binding: ActivityShopItemBinding
     private lateinit var screenMode: String
     private var shopItemId = ShopItem.UNDEFINED_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_shop_item)
+        binding = ActivityShopItemBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
         parseIntent(intent)
 
         if (savedInstanceState === null) {
