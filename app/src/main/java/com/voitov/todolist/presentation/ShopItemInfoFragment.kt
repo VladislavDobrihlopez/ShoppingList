@@ -8,28 +8,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.RadioButton
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.textfield.TextInputLayout
-import com.voitov.todolist.R
+import com.voitov.todolist.databinding.FragmentShopItemInfoBinding
 import com.voitov.todolist.domain.Priority
 import com.voitov.todolist.domain.ShopItem
 
 class ShopItemInfoFragment : Fragment() {
-    private lateinit var viewModel: ShopItemViewModel
-    private lateinit var textInputLayoutShopItemName: TextInputLayout
-    private lateinit var textViewShopItemName: TextView
-    private lateinit var textInputLayoutShopItemCount: TextInputLayout
-    private lateinit var textViewShopItemCount: TextView
-    private lateinit var radioButtonLow: RadioButton
-    private lateinit var radioButtonMedium: RadioButton
-    private lateinit var radioButtonHigh: RadioButton
-    private lateinit var buttonSaveShopItem: Button
-
+    private var _binding: FragmentShopItemInfoBinding? = null
+    private val binding: FragmentShopItemInfoBinding
+        get() = _binding ?: throw RuntimeException("ShopItemInfoFragment == null")
+    private val viewModel by lazy {
+        ViewModelProvider(this).get(ShopItemViewModel::class.java)
+    }
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
@@ -49,13 +41,14 @@ class ShopItemInfoFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_shop_item_info, container, false)
+    ): View {
+        _binding = FragmentShopItemInfoBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this).get(ShopItemViewModel::class.java)
-        initViews(view)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         setupListeners()
         launchAppropriateMode()
     }
@@ -75,37 +68,36 @@ class ShopItemInfoFragment : Fragment() {
 
     private fun launchItemEditingMode() {
         viewModel.getShopItem(shopItemId)
-        viewModel.shopItemLD.observe(viewLifecycleOwner, Observer {
-            textViewShopItemName.text = it.name
-            textViewShopItemCount.text = it.count.toString()
-        })
-
-        buttonSaveShopItem.setOnClickListener {
-            val name = textViewShopItemName.text.toString()
-            val count = textViewShopItemCount.text.toString()
-            val priority = if (radioButtonLow.isChecked) {
-                Priority.LOW
-            } else if (radioButtonMedium.isChecked) {
-                Priority.MEDIUM
-            } else {
-                Priority.HIGH
+        with(binding) {
+            buttonSaveShopItem.setOnClickListener {
+                val name = textViewShopItemName.text.toString()
+                val count = textViewShopItemCount.text.toString()
+                val priority = if (radioButtonLow.isChecked) {
+                    Priority.LOW
+                } else if (radioButtonMedium.isChecked) {
+                    Priority.MEDIUM
+                } else {
+                    Priority.HIGH
+                }
+                this@ShopItemInfoFragment.viewModel.editShopItem(name, count, priority)
             }
-            viewModel.editShopItem(name, count, priority)
         }
     }
 
     private fun launchItemAddingMode() {
-        buttonSaveShopItem.setOnClickListener {
-            val name = textViewShopItemName.text.toString()
-            val count = textViewShopItemCount.text.toString()
-            val priority = if (radioButtonLow.isChecked) {
-                Priority.LOW
-            } else if (radioButtonMedium.isChecked) {
-                Priority.MEDIUM
-            } else {
-                Priority.HIGH
+        with(binding) {
+            buttonSaveShopItem.setOnClickListener {
+                val name = textViewShopItemName.text.toString()
+                val count = textViewShopItemCount.text.toString()
+                val priority = if (radioButtonLow.isChecked) {
+                    Priority.LOW
+                } else if (radioButtonMedium.isChecked) {
+                    Priority.MEDIUM
+                } else {
+                    Priority.HIGH
+                }
+                this@ShopItemInfoFragment.viewModel.addShopItem(name, count, priority)
             }
-            viewModel.addShopItem(name, count, priority)
         }
     }
 
@@ -132,25 +124,7 @@ class ShopItemInfoFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        viewModel.errorInputName.observe(viewLifecycleOwner, Observer {
-            val message = if (it) {
-                getString(R.string.error_invalid_name)
-            } else {
-                null
-            }
-            textInputLayoutShopItemName.error = message
-        })
-
-        viewModel.errorInputCount.observe(viewLifecycleOwner, Observer {
-            val message = if (it) {
-                getString(R.string.error_invalid_count)
-            } else {
-                null
-            }
-            textInputLayoutShopItemCount.error = message
-        })
-
-        textViewShopItemName.addTextChangedListener(object : TextWatcher {
+        binding.textViewShopItemName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -162,7 +136,7 @@ class ShopItemInfoFragment : Fragment() {
             }
         })
 
-        textViewShopItemCount.addTextChangedListener(object : TextWatcher {
+        binding.textViewShopItemCount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -179,17 +153,10 @@ class ShopItemInfoFragment : Fragment() {
         })
     }
 
-    private fun initViews(view: View) {
-        textInputLayoutShopItemName = view.findViewById(R.id.textInputLayoutShopItemName)
-        textViewShopItemName = view.findViewById(R.id.textViewShopItemName)
-        textInputLayoutShopItemCount = view.findViewById(R.id.textInputLayoutShopItemCount)
-        textViewShopItemCount = view.findViewById(R.id.textViewShopItemCount)
-        radioButtonLow = view.findViewById(R.id.radioButtonLow)
-        radioButtonMedium = view.findViewById(R.id.radioButtonMedium)
-        radioButtonHigh = view.findViewById(R.id.radioButtonHigh)
-        buttonSaveShopItem = view.findViewById(R.id.buttonSaveShopItem)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
 
     companion object {
         fun newInstanceOfFragmentInAddingMode(): ShopItemInfoFragment {

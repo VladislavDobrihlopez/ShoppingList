@@ -1,102 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp"
-    tools:context=".presentation.ShopItemInfoFragment">
+<layout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutShopItemName"
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.voitov.todolist.presentation.ShopItemViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayoutShopItemCount"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:layout_editor_absoluteX="8dp">
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        tools:context=".presentation.ShopItemInfoFragment">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textViewShopItemName"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutShopItemName"
+            errorOnInvalidName="@{viewModel.errorInputName}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name"
-            android:inputType="textCapWords" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginVertical="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/textInputLayoutShopItemCount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:layout_editor_absoluteX="8dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutShopItemCount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/radioGroupOfPriorities"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutShopItemName"
-        tools:layout_editor_absoluteX="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textViewShopItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                android:inputType="textCapWords"
+                android:text="@{viewModel.shopItemLD.name}" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textViewShopItemCount"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutShopItemCount"
+            errorOnInvalidCount="@{viewModel.errorInputCount}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/count"
-            android:inputType="number" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginVertical="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/radioGroupOfPriorities"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutShopItemName"
+            tools:layout_editor_absoluteX="8dp">
 
-    <RadioGroup
-        android:id="@+id/radioGroupOfPriorities"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginVertical="8dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSaveShopItem"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutShopItemCount"
-        tools:layout_editor_absoluteX="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textViewShopItemCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/count"
+                android:inputType="number"
+                android:text="@{String.valueOf(viewModel.shopItemLD.count)}" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <RadioButton
-            android:id="@+id/radioButtonLow"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/radioGroupOfPriorities"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_green_light"
-            android:padding="8dp"
-            android:text="@string/low"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:layout_gravity="center"
+            android:layout_marginVertical="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/buttonSaveShopItem"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutShopItemCount"
+            tools:layout_editor_absoluteX="8dp">
 
-        <RadioButton
-            android:id="@+id/radioButtonMedium"
-            android:layout_width="wrap_content"
+            <RadioButton
+                android:id="@+id/radioButtonLow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_green_light"
+                android:checked="@{viewModel.shopItemLD.priority == com.voitov.todolist.domain.Priority.LOW}"
+                android:padding="8dp"
+                android:text="@string/low"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <RadioButton
+                android:id="@+id/radioButtonMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_orange_light"
+                android:checked="@{viewModel.shopItemLD.priority == com.voitov.todolist.domain.Priority.MEDIUM}"
+                android:padding="8dp"
+                android:text="@string/medium"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <RadioButton
+                android:id="@+id/radioButtonHigh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_red_light"
+                android:checked="@{viewModel.shopItemLD.priority == com.voitov.todolist.domain.Priority.HIGH}"
+                android:padding="8dp"
+                android:text="@string/high"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/buttonSaveShopItem"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light"
-            android:checked="true"
-            android:padding="8dp"
-            android:text="@string/medium"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/purple_500"
+            android:text="@string/save"
+            android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <RadioButton
-            android:id="@+id/radioButtonHigh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_red_light"
-            android:padding="8dp"
-            android:text="@string/high"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/buttonSaveShopItem"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginBottom="12dp"
-        android:backgroundTint="@color/purple_500"
-        android:text="@string/save"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
