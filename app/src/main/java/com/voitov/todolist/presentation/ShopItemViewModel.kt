@@ -1,13 +1,15 @@
 package com.voitov.todolist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.voitov.todolist.data.ShopListRepositoryImpl
 import com.voitov.todolist.domain.*
 
-class ShopItemViewModel : ViewModel() {
-    private val shopListRepository = ShopListRepositoryImpl
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
+    private val shopListRepository = ShopListRepositoryImpl(application)
     private val getShopItemUseCase = GetShopItemUseCase(shopListRepository)
     private val addShopItemUseCase = AddShopItemUseCase(shopListRepository)
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
