@@ -1,13 +1,15 @@
 package com.voitov.todolist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.voitov.todolist.data.ShopListRepositoryImpl
 import com.voitov.todolist.domain.*
+import kotlinx.coroutines.launch
 
-class MainActivityViewModel : ViewModel() {
-    private val shopListRepository: ShopListRepository = ShopListRepositoryImpl
+class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+    private val shopListRepository: ShopListRepository = ShopListRepositoryImpl(application)
     private val getShopListUseCase = GetShopListUseCase(shopListRepository)
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
     private val removeShopItemUseCase = RemoveShopItemUseCase(shopListRepository)
@@ -17,10 +19,14 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun editShopItem(shopItem: ShopItem) {
-        editShopItemUseCase.editShopItem(shopItem.copy(enabled = !shopItem.enabled))
+        viewModelScope.launch {
+            editShopItemUseCase.editShopItem(shopItem.copy(enabled = !shopItem.enabled))
+        }
     }
 
     fun removeShopItem(shopItem: ShopItem) {
-        removeShopItemUseCase.removeShopItem(shopItem)
+        viewModelScope.launch {
+            removeShopItemUseCase.removeShopItem(shopItem)
+        }
     }
 }

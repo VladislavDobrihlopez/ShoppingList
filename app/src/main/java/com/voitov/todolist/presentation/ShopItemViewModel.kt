@@ -1,13 +1,16 @@
 package com.voitov.todolist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.voitov.todolist.data.ShopListRepositoryImpl
 import com.voitov.todolist.domain.*
+import kotlinx.coroutines.launch
 
-class ShopItemViewModel : ViewModel() {
-    private val shopListRepository = ShopListRepositoryImpl
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
+    private val shopListRepository = ShopListRepositoryImpl(application)
     private val getShopItemUseCase = GetShopItemUseCase(shopListRepository)
     private val addShopItemUseCase = AddShopItemUseCase(shopListRepository)
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
@@ -33,7 +36,9 @@ class ShopItemViewModel : ViewModel() {
         val count = parseCount(inputCount)
         if (areFieldsValid(name, count)) {
             val newShopItem = ShopItem(name, count, priority)
-            addShopItemUseCase.addShopItem(newShopItem)
+            viewModelScope.launch {
+                addShopItemUseCase.addShopItem(newShopItem)
+            }
             closeScreen()
         }
     }
@@ -53,15 +58,19 @@ class ShopItemViewModel : ViewModel() {
                     count = count,
                     priority = priority
                 )
-                editShopItemUseCase.editShopItem(editedShopItem)
+                viewModelScope.launch {
+                    editShopItemUseCase.editShopItem(editedShopItem)
+                }
                 closeScreen()
             }
         }
     }
 
     fun getShopItem(shopItemId: Int) {
-        val shopItem = getShopItemUseCase.getShopItem(shopItemId)
-        _shopItemLD.value = shopItem
+        viewModelScope.launch {
+            val shopItem = getShopItemUseCase.getShopItem(shopItemId)
+            _shopItemLD.value = shopItem //
+        }
     }
 
     private fun closeScreen() {
