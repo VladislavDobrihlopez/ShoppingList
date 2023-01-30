@@ -4,11 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.voitov.todolist.data.ShopListRepositoryImpl
 import com.voitov.todolist.domain.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
@@ -33,14 +31,12 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     val shallCloseScreen: LiveData<Unit>
         get() = _shallCloseScreen
 
-    private val scope = CoroutineScope(Dispatchers.Main)
-
     fun addShopItem(inputName: String?, inputCount: String?, priority: Priority) {
         val name = parseName(inputName)
         val count = parseCount(inputCount)
         if (areFieldsValid(name, count)) {
             val newShopItem = ShopItem(name, count, priority)
-            scope.launch {
+            viewModelScope.launch {
                 addShopItemUseCase.addShopItem(newShopItem)
             }
             closeScreen()
@@ -62,7 +58,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
                     count = count,
                     priority = priority
                 )
-                scope.launch {
+                viewModelScope.launch {
                     editShopItemUseCase.editShopItem(editedShopItem)
                 }
                 closeScreen()
@@ -71,7 +67,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getShopItem(shopItemId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             val shopItem = getShopItemUseCase.getShopItem(shopItemId)
             _shopItemLD.value = shopItem //
         }
@@ -115,10 +111,6 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
 
     fun resetErrorInputCount() {
         _errorInputCount.value = false
-    }
-
-    override fun onCleared() {
-        scope.cancel()
     }
 
     companion object {
