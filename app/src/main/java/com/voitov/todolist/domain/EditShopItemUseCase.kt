@@ -1,6 +1,8 @@
 package com.voitov.todolist.domain
 
-class EditShopItemUseCase(
+import javax.inject.Inject
+
+class EditShopItemUseCase @Inject constructor(
     private val repository: ShopListRepository
 ) {
     suspend fun editShopItem(shopItem: ShopItem) {

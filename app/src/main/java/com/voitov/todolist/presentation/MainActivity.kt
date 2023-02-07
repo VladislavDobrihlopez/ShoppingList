@@ -11,24 +11,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.voitov.todolist.R
 import com.voitov.todolist.databinding.ActivityMainBinding
 import com.voitov.todolist.domain.ShopItem
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListener {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: MainActivityViewModel
+
+    @Inject
+    lateinit var viewModel: MainActivityViewModel
     private lateinit var adapter: ShopListAdapter
 
     private val isPortraitMode: Boolean
         get() = binding.fragmentContainerViewShopItemAlbum == null
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as ShopListApp).component.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
 
         setContentView(binding.root)
         setupRecyclerView()
 
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         viewModel.getShopList().observe(this, Observer {
             Log.d(TAG, it.toString())
             adapter.submitList(it)

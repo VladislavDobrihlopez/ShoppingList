@@ -1,16 +1,16 @@
 package com.voitov.todolist.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.voitov.todolist.data.ShopListRepositoryImpl
 import com.voitov.todolist.domain.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
-    private val shopListRepository = ShopListRepositoryImpl(application)
+class ShopItemViewModel @Inject constructor(
+    shopListRepository: ShopListRepository
+) : ViewModel() {
     private val getShopItemUseCase = GetShopItemUseCase(shopListRepository)
     private val addShopItemUseCase = AddShopItemUseCase(shopListRepository)
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
