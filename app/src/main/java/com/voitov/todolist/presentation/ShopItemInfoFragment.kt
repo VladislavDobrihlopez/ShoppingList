@@ -21,7 +21,6 @@ class ShopItemInfoFragment : Fragment() {
     private val binding: FragmentShopItemInfoBinding
         get() = _binding ?: throw RuntimeException("ShopItemInfoFragment == null")
 
-    @Inject
     lateinit var viewModel: ShopItemViewModel
 
     @Inject

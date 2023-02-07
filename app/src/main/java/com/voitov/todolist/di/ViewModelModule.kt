@@ -6,17 +6,16 @@ import com.voitov.todolist.presentation.ShopItemViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import dagger.multibindings.StringKey
 
 @Module
 interface ViewModelModule {
     @IntoMap
-    @StringKey("MainActivityViewModel")
+    @ViewModelKey(MainActivityViewModel::class)
     @Binds
     fun bindMainActivityViewModel(viewModel: MainActivityViewModel): ViewModel
 
     @IntoMap
-    @StringKey("ShopItemViewModel")
+    @ViewModelKey(ShopItemViewModel::class)
     @Binds
     fun bindShopItemViewModel(viewModel: ShopItemViewModel): ViewModel
 }

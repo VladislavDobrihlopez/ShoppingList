@@ -8,11 +8,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivityViewModel @Inject constructor(
-    shopListRepository: ShopListRepository
+    shopListRepository: ShopListRepository,
+    private val getShopListUseCase: GetShopListUseCase,
+    private val editShopItemUseCase: EditShopItemUseCase,
+    private val removeShopItemUseCase: RemoveShopItemUseCase,
 ) : ViewModel() {
-    private val getShopListUseCase = GetShopListUseCase(shopListRepository)
-    private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
-    private val removeShopItemUseCase = RemoveShopItemUseCase(shopListRepository)
 
     fun getShopList(): LiveData<List<ShopItem>> {
         return getShopListUseCase.getShopList()

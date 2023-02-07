@@ -16,16 +16,14 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListener {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
-
-    @Inject
-    lateinit var viewModel: MainActivityViewModel
     private lateinit var adapter: ShopListAdapter
-
-    private val isPortraitMode: Boolean
-        get() = binding.fragmentContainerViewShopItemAlbum == null
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+    lateinit var viewModel: MainActivityViewModel
+
+    private val isPortraitMode: Boolean
+        get() = binding.fragmentContainerViewShopItemAlbum == null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as ShopListApp).component.inject(this)

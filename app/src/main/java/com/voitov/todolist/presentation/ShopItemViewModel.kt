@@ -9,12 +9,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ShopItemViewModel @Inject constructor(
-    shopListRepository: ShopListRepository
+    shopListRepository: ShopListRepository,
+    private val getShopItemUseCase: GetShopItemUseCase,
+    private val addShopItemUseCase: AddShopItemUseCase,
+    private val editShopItemUseCase: EditShopItemUseCase,
 ) : ViewModel() {
-    private val getShopItemUseCase = GetShopItemUseCase(shopListRepository)
-    private val addShopItemUseCase = AddShopItemUseCase(shopListRepository)
-    private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
-
     private val _errorInputName = MutableLiveData<Boolean>(false)
     val errorInputName: LiveData<Boolean>
         get() = _errorInputName
