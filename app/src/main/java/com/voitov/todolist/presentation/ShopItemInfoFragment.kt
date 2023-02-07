@@ -14,20 +14,26 @@ import androidx.lifecycle.ViewModelProvider
 import com.voitov.todolist.databinding.FragmentShopItemInfoBinding
 import com.voitov.todolist.domain.Priority
 import com.voitov.todolist.domain.ShopItem
+import javax.inject.Inject
 
 class ShopItemInfoFragment : Fragment() {
     private var _binding: FragmentShopItemInfoBinding? = null
     private val binding: FragmentShopItemInfoBinding
         get() = _binding ?: throw RuntimeException("ShopItemInfoFragment == null")
-    private val viewModel by lazy {
-        ViewModelProvider(this).get(ShopItemViewModel::class.java)
-    }
+
+    @Inject
+    lateinit var viewModel: ShopItemViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
     private lateinit var onFinishedListener: OnFinishedListener
 
     override fun onAttach(context: Context) {
+        (requireActivity().application as ShopListApp).component.inject(this)
         super.onAttach(context)
 
         if (context is OnFinishedListener) {
@@ -47,6 +53,7 @@ class ShopItemInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ShopItemViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         setupListeners()

@@ -1,8 +1,9 @@
 package com.voitov.todolist.data
 
 import com.voitov.todolist.domain.ShopItem
+import javax.inject.Inject
 
-class ShopListMapper {
+class ShopListMapper @Inject constructor() {
     fun mapEntityToDbModel(shopItem: ShopItem): ShopItemDbModel {
         return ShopItemDbModel(
             id = shopItem.id,

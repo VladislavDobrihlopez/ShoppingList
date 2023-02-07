@@ -5,9 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.voitov.todolist.domain.ShopItem
 import com.voitov.todolist.domain.ShopListRepository
+import javax.inject.Inject
 
-class ShopListRepositoryImpl(
-    private val application: Application
+class ShopListRepositoryImpl @Inject constructor(
+    private val dao: ShopListDao,
+    private val mapper: ShopListMapper,
+    private val application: Application,
 ) : ShopListRepository {
 //    private val shopItems =
 //        sortedSetOf<ShopItem>({ shopItem1, shopItem2 -> shopItem1.id.compareTo(shopItem2.id) })
@@ -23,9 +26,6 @@ class ShopListRepositoryImpl(
 //            addShopItem(ShopItem("block of flats $i", 1.0, priority, enabled))
 //        }
 //    }
-
-    private val dao = AppDatabase.getInstance(application).getShopListDao()
-    private val mapper = ShopListMapper()
 
     override suspend fun addShopItem(shopItem: ShopItem) {
         dao.addShopItem(mapper.mapEntityToDbModel(shopItem))
