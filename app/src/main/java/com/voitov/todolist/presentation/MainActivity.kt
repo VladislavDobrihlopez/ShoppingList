@@ -1,5 +1,6 @@
 package com.voitov.todolist.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,6 +39,15 @@ class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListene
             Log.d(TAG, it.toString())
             adapter.submitList(it)
         })
+
+        contentResolver.query(
+            Uri.parse("content://com.voitov.todolist/ShopItems"),
+            null,
+            null,
+            null,
+            null,
+            null
+        )
     }
 
     private fun launchAppropriateMode(screenMode: String, shopItemId: Int = ShopItem.UNDEFINED_ID) {
