@@ -1,5 +1,6 @@
 package com.voitov.todolist.data
 
+import android.database.Cursor
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
@@ -20,6 +21,9 @@ interface ShopListDao {
 
     @Query("SELECT * FROM ShopItems")
     fun getShopList(): LiveData<List<ShopItemDbModel>>
+
+    @Query("SELECT * FROM ShopItems")
+    fun getShopListCursor(): Cursor
 
     @Delete
     suspend fun removeShopItemDbModel(shopItem: ShopItemDbModel)

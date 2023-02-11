@@ -9,13 +9,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.util.getColumnIndexOrThrow
 import com.voitov.todolist.R
 import com.voitov.todolist.databinding.ActivityMainBinding
+import com.voitov.todolist.domain.Priority
 import com.voitov.todolist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListener {
-    private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: ShopListAdapter
 
@@ -36,18 +38,40 @@ class MainActivity : AppCompatActivity(), ShopItemInfoFragment.OnFinishedListene
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         viewModel.getShopList().observe(this, Observer {
-            Log.d(TAG, it.toString())
+            //Log.d(TAG, it.toString())
             adapter.submitList(it)
         })
 
-        contentResolver.query(
-            Uri.parse("content://com.voitov.todolist/ShopItems"),
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.voitov.todolist/ShopItems"),
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+
+            while (cursor?.moveToNext() == true) {
+                val id = cursor.getInt(getColumnIndexOrThrow(cursor, "id"))
+                val name = cursor.getString(getColumnIndexOrThrow(cursor, "name"))
+                val count = cursor.getDouble(getColumnIndexOrThrow(cursor, "count"))
+                val enabled = cursor.getInt(getColumnIndexOrThrow(cursor, "enabled")) > 0
+                val priority = cursor.getString(getColumnIndexOrThrow(cursor, "priority"))
+
+                val shopItem = ShopItem(
+                    name = name,
+                    count = count,
+                    priority = Priority.valueOf(priority),
+                    enabled = enabled,
+                    id = id
+                )
+
+                Log.d(TAG, shopItem.toString())
+            }
+
+            cursor?.close()
+        }
     }
 
     private fun launchAppropriateMode(screenMode: String, shopItemId: Int = ShopItem.UNDEFINED_ID) {

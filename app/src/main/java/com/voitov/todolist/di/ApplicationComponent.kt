@@ -1,6 +1,7 @@
 package com.voitov.todolist.di
 
 import android.app.Application
+import com.voitov.todolist.data.ShopListContentProvider
 import com.voitov.todolist.presentation.MainActivity
 import com.voitov.todolist.presentation.ShopItemInfoFragment
 import dagger.BindsInstance
@@ -11,6 +12,7 @@ import dagger.Component
 interface ApplicationComponent {
     fun inject(activity: MainActivity)
     fun inject(fragment: ShopItemInfoFragment)
+    fun inject(provider: ShopListContentProvider)
 
     @Component.Factory
     interface Factory {
