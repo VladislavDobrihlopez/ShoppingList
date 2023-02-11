@@ -16,6 +16,9 @@ interface ShopListDao {
     @Insert(onConflict = REPLACE)
     fun addShopItemSync(shopItem: ShopItemDbModel)
 
+    @Query("DELETE FROM ShopItems WHERE id=:id")
+    fun removeShopItemDbModelSync(id: Int): Int
+
     @Insert(onConflict = REPLACE)
     suspend fun editShopItemDbModel(shopItem: ShopItemDbModel)
 
@@ -29,5 +32,5 @@ interface ShopListDao {
     fun getShopListCursor(): Cursor
 
     @Delete
-    suspend fun removeShopItemDbModel(shopItem: ShopItemDbModel)
+    suspend fun removeShopItemDbModelSync(shopItem: ShopItemDbModel)
 }

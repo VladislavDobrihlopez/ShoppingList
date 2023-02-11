@@ -35,6 +35,6 @@ class ShopListRepositoryImpl @Inject constructor(
 
 
     override suspend fun removeShopItem(shopItem: ShopItem) {
-        dao.removeShopItemDbModel(mapper.mapEntityToDbModel(shopItem))
+        dao.removeShopItemDbModelSync(mapper.mapEntityToDbModel(shopItem))
     }
 }
