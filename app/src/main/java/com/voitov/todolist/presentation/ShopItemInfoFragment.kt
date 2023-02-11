@@ -88,7 +88,20 @@ class ShopItemInfoFragment : Fragment() {
                 } else {
                     Priority.HIGH
                 }
-                this@ShopItemInfoFragment.viewModel.editShopItem(name, count, priority)
+                thread {
+                    context?.contentResolver?.update(
+                        Uri.parse("content://com.voitov.todolist/ShopItems"),
+                        ContentValues().apply {
+                            put("id", shopItemId)
+                            put("name", name)
+                            put("count", count)
+                            put("priority", priority.name)
+                        },
+                        null,
+                        arrayOf(name + " edited", count, priority.name)
+                    )
+                }
+                //this@ShopItemInfoFragment.viewModel.editShopItem(name, count, priority)
             }
         }
     }

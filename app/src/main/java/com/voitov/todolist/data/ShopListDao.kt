@@ -20,6 +20,9 @@ interface ShopListDao {
     fun removeShopItemDbModelSync(id: Int): Int
 
     @Insert(onConflict = REPLACE)
+    fun editShopItemDbModelSync(shopItem: ShopItemDbModel)
+
+    @Insert(onConflict = REPLACE)
     suspend fun editShopItemDbModel(shopItem: ShopItemDbModel)
 
     @Query("SELECT * FROM ShopItems WHERE id=:shopItemId LIMIT 1")

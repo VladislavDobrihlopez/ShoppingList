@@ -83,8 +83,39 @@ class ShopListContentProvider : ContentProvider() {
         return 0
     }
 
-    override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
-        TODO("Not yet implemented")
+    override fun update(
+        uri: Uri,
+        values: ContentValues?,
+        selection: String?,
+        selectionArgs: Array<out String>?
+    ): Int {
+        when (uriMatcher.match(uri)) {
+            QUERY_GET_ALL_ITEMS -> {
+                val id = values?.getAsInteger("id") ?: -1
+                val oldName = values?.getAsString("name") ?: ""
+                val oldCount = values?.getAsDouble("count") ?: 0.0
+                val oldPriority = Priority.valueOf(values?.getAsString("priority") ?: "")
+                val oldShopItem = ShopItemDbModel(
+                    id,
+                    oldName,
+                    oldCount,
+                    oldPriority,
+                )
+
+                val newName = selectionArgs?.get(0) ?: ""
+                val newCount = selectionArgs?.get(1)?.toDouble() ?: 0.0
+                val newPriority = Priority.valueOf(selectionArgs?.get(2) ?: "") ?: Priority.LOW
+
+                dao.editShopItemDbModelSync(
+                    oldShopItem.copy(
+                        name = newName,
+                        count = newCount,
+                        priority = newPriority
+                    )
+                )
+            }
+        }
+        return 0
     }
 
     companion object {
