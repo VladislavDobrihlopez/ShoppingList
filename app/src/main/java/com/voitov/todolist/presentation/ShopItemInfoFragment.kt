@@ -1,6 +1,8 @@
 package com.voitov.todolist.presentation
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +17,7 @@ import com.voitov.todolist.databinding.FragmentShopItemInfoBinding
 import com.voitov.todolist.domain.Priority
 import com.voitov.todolist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemInfoFragment : Fragment() {
     private var _binding: FragmentShopItemInfoBinding? = null
@@ -102,7 +105,19 @@ class ShopItemInfoFragment : Fragment() {
                 } else {
                     Priority.HIGH
                 }
-                this@ShopItemInfoFragment.viewModel.addShopItem(name, count, priority)
+                thread {
+                    context?.contentResolver?.insert(
+                        Uri.parse("content://com.voitov.todolist/ShopItems"),
+                        ContentValues().apply {
+                            put("id", -1)
+                            put("name", name)
+                            put("count", count)
+                            put("enabled", true)
+                            put("priority", priority.name)
+                        }
+                    )
+                }
+                //this@ShopItemInfoFragment.viewModel.addShopItem(name, count, priority)
             }
         }
     }
